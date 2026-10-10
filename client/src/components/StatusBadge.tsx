@@ -11,23 +11,23 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
       case 'completed':
       case 'success':
       case 'ready':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200 ring-emerald-500/20';
+        return 'bg-emerald-50/80 text-emerald-800 border-emerald-200/90 shadow-2xs';
       case 'completed_with_errors':
-        return 'bg-amber-50 text-amber-700 border-amber-200 ring-amber-500/20';
+        return 'bg-amber-50/80 text-amber-800 border-amber-200/90 shadow-2xs';
       case 'processing':
       case 'generating':
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200 ring-indigo-500/20';
+        return 'bg-indigo-50/80 text-indigo-800 border-indigo-200/90 shadow-2xs';
       case 'queued':
       case 'pending':
       case 'validating':
-        return 'bg-blue-50 text-blue-700 border-blue-200 ring-blue-500/20';
+        return 'bg-sky-50/80 text-sky-800 border-sky-200/90 shadow-2xs';
       case 'failed':
       case 'invalid':
-        return 'bg-rose-50 text-rose-700 border-rose-200 ring-rose-500/20';
+        return 'bg-rose-50/80 text-rose-800 border-rose-200/90 shadow-2xs';
       case 'cancelled':
-        return 'bg-slate-100 text-slate-700 border-slate-300 ring-slate-500/20';
+        return 'bg-slate-100 text-slate-700 border-slate-300 shadow-2xs';
       default:
-        return 'bg-slate-50 text-slate-600 border-slate-200 ring-slate-500/10';
+        return 'bg-slate-50 text-slate-700 border-slate-200 shadow-2xs';
     }
   };
 
@@ -39,16 +39,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-medium border rounded-full ${
-        size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs'
+      className={`inline-flex items-center gap-1.5 font-medium border rounded-full transition-colors ${
+        size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
       } ${getStyles()}`}
     >
       <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          isAnimated ? 'animate-pulse bg-current' : 'bg-current opacity-80'
+        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+          isAnimated ? 'animate-pulse bg-current' : 'bg-current opacity-70'
         }`}
       />
-      {label}
+      <span>{label}</span>
     </span>
   );
 };

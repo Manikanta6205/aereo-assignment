@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -14,7 +14,13 @@ import {
   ArrowLeft,
   Download,
   Sparkles,
-  Info
+  Info,
+  Check,
+  FileText,
+  Users,
+  ShieldCheck,
+  ChevronRight,
+  HelpCircle
 } from 'lucide-react';
 import { createJob, uploadCsvJob } from '../services/api';
 
@@ -51,6 +57,7 @@ export const GenerateCertificates: React.FC = () => {
     handleSubmit,
     trigger,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
@@ -62,6 +69,8 @@ export const GenerateCertificates: React.FC = () => {
       event_name: 'TechSummit 2026',
     },
   });
+
+  const watchedValues = watch();
 
   const handleCsvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -188,149 +197,239 @@ export const GenerateCertificates: React.FC = () => {
     }
   };
 
+  const stepsConfig = [
+    { num: 1, label: 'Certificate Info', subtitle: 'Course & authority details' },
+    { num: 2, label: 'Recipient Data', subtitle: 'CSV upload or manual list' },
+    { num: 3, label: 'Validation Preview', subtitle: 'Integrity check & preview' },
+    { num: 4, label: 'Review & Launch', subtitle: 'Confirm batch & dispatch' },
+  ];
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-16">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-          Generate Bulk Certificates
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">
-          Follow the guided workflow to configure metadata, upload recipients, validate records, and launch generation.
-        </p>
+      {/* Top Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">
+            <span>Bulk Generation Pipeline</span>
+            <span>•</span>
+            <span>Batch Engine</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 font-display">
+            Generate Bulk Certificates
+          </h1>
+          <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
+            Follow the guided workflow to configure metadata, upload recipients, validate records, and launch generation.
+          </p>
+        </div>
+
+        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200/80 shadow-2xs self-start">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-medium text-slate-600">
+            ReportLab A4 Vector Layout
+          </span>
+        </div>
       </div>
 
       {/* Stepper Progress Indicator */}
-      <div className="grid grid-cols-4 gap-2 border-b border-slate-200 pb-4 text-xs sm:text-sm font-medium">
-        {[
-          { num: 1, label: 'Certificate Info' },
-          { num: 2, label: 'Recipient Data' },
-          { num: 3, label: 'Validation Preview' },
-          { num: 4, label: 'Review & Launch' },
-        ].map((s) => {
-          const isActive = currentStep === s.num;
-          const isDone = currentStep > s.num;
-          return (
-            <div
-              key={s.num}
-              className={`flex items-center gap-2 pb-2 border-b-2 transition-all ${
-                isActive
-                  ? 'border-indigo-600 text-indigo-700 font-bold'
-                  : isDone
-                  ? 'border-emerald-500 text-emerald-600'
-                  : 'border-transparent text-slate-400'
-              }`}
-            >
-              <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          {stepsConfig.map((s) => {
+            const isActive = currentStep === s.num;
+            const isDone = currentStep > s.num;
+            return (
+              <div
+                key={s.num}
+                className={`relative flex items-center gap-3 p-2.5 rounded-xl transition-all ${
                   isActive
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-indigo-50/70 border border-indigo-200/80 shadow-2xs'
                     : isDone
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-slate-200 text-slate-600'
+                    ? 'bg-slate-50/70 border border-slate-200/60'
+                    : 'bg-transparent border border-transparent'
                 }`}
               >
-                {isDone ? '✓' : s.num}
-              </span>
-              <span className="hidden sm:inline">{s.label}</span>
-            </div>
-          );
-        })}
+                <div
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-all ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-xs shadow-indigo-600/30'
+                      : isDone
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-100 text-slate-500 border border-slate-200'
+                  }`}
+                >
+                  {isDone ? <Check className="w-4 h-4 stroke-[2.5]" /> : s.num}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div
+                    className={`text-xs font-bold truncate leading-tight ${
+                      isActive
+                        ? 'text-indigo-950 font-bold'
+                        : isDone
+                        ? 'text-slate-800'
+                        : 'text-slate-500'
+                    }`}
+                  >
+                    {s.label}
+                  </div>
+                  <div className="text-[11px] text-slate-400 truncate hidden sm:block">
+                    {s.subtitle}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {submitError && (
-        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex items-start gap-2.5">
+        <div className="p-4 rounded-xl bg-rose-50/90 border border-rose-200 text-rose-800 text-xs sm:text-sm flex items-start gap-3 shadow-2xs">
           <AlertTriangle className="w-5 h-5 shrink-0 text-rose-600 mt-0.5" />
-          <div>{submitError}</div>
+          <div className="flex-1 font-medium">{submitError}</div>
         </div>
       )}
 
       {/* Step 1: Certificate Information Form */}
       {currentStep === 1 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-lg font-bold text-slate-900">1. Certificate Information</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              These details are printed on every certificate in the official layout.
-            </p>
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
+            <div className="border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-indigo-600" />
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
+                  1. Certificate Information
+                </h2>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                These details are printed on every certificate in the official layout.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="course_name_input"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                >
+                  Course / Certification Title <span className="text-indigo-600">*</span>
+                </label>
+                <input
+                  id="course_name_input"
+                  type="text"
+                  {...register('course_name')}
+                  placeholder="e.g. Advanced Distributed Systems & Cloud Architecture"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50/30 hover:bg-white focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                />
+                {errors.course_name && (
+                  <p className="text-xs text-rose-600 mt-1.5 font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {errors.course_name.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="organization_input"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                >
+                  Issuing Organization <span className="text-indigo-600">*</span>
+                </label>
+                <input
+                  id="organization_input"
+                  type="text"
+                  {...register('organization')}
+                  placeholder="e.g. Global Technology Institute"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50/30 hover:bg-white focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                />
+                {errors.organization && (
+                  <p className="text-xs text-rose-600 mt-1.5 font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {errors.organization.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="issuer_input"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                >
+                  Authorized Signatory / Issuer <span className="text-indigo-600">*</span>
+                </label>
+                <input
+                  id="issuer_input"
+                  type="text"
+                  {...register('issuer')}
+                  placeholder="e.g. Dr. Sarah Connor, Executive Dean"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50/30 hover:bg-white focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                />
+                {errors.issuer && (
+                  <p className="text-xs text-rose-600 mt-1.5 font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {errors.issuer.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="issue_date_input"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                >
+                  Issue Date <span className="text-indigo-600">*</span>
+                </label>
+                <input
+                  id="issue_date_input"
+                  type="text"
+                  {...register('issue_date')}
+                  placeholder="e.g. October 15, 2026"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50/30 hover:bg-white focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                />
+                {errors.issue_date && (
+                  <p className="text-xs text-rose-600 mt-1.5 font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {errors.issue_date.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="event_name_input"
+                  className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5"
+                >
+                  Event / Context Name (Optional)
+                </label>
+                <input
+                  id="event_name_input"
+                  type="text"
+                  {...register('event_name')}
+                  placeholder="e.g. Annual Cloud Summit 2026"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-slate-50/30 hover:bg-white focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="sm:col-span-2">
-              <label htmlFor="course_name_input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Course / Certification Title *
-              </label>
-              <input
-                id="course_name_input"
-                type="text"
-                {...register('course_name')}
-                placeholder="e.g. Advanced Distributed Systems & Cloud Architecture"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              {errors.course_name && (
-                <p className="text-xs text-rose-600 mt-1">{errors.course_name.message}</p>
-              )}
+          {/* Live Credential Typography Preview Strip */}
+          <div className="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-md">
+            <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-3 mb-3">
+              <span className="flex items-center gap-1.5 font-semibold text-slate-300">
+                <ShieldCheck className="w-4 h-4 text-indigo-400" />
+                Live Credential Heading Preview
+              </span>
+              <span className="font-mono text-[11px] text-slate-400">Standard Landscape Template</span>
             </div>
-
-            <div>
-              <label htmlFor="organization_input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Issuing Organization *
-              </label>
-              <input
-                id="organization_input"
-                type="text"
-                {...register('organization')}
-                placeholder="e.g. Global Technology Institute"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              {errors.organization && (
-                <p className="text-xs text-rose-600 mt-1">{errors.organization.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="issuer_input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Authorized Signatory / Issuer *
-              </label>
-              <input
-                id="issuer_input"
-                type="text"
-                {...register('issuer')}
-                placeholder="e.g. Dr. Sarah Connor, Executive Dean"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              {errors.issuer && (
-                <p className="text-xs text-rose-600 mt-1">{errors.issuer.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="issue_date_input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Issue Date *
-              </label>
-              <input
-                id="issue_date_input"
-                type="text"
-                {...register('issue_date')}
-                placeholder="e.g. October 15, 2026"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              {errors.issue_date && (
-                <p className="text-xs text-rose-600 mt-1">{errors.issue_date.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="event_name_input" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                Event / Context Name (Optional)
-              </label>
-              <input
-                id="event_name_input"
-                type="text"
-                {...register('event_name')}
-                placeholder="e.g. Annual Cloud Summit 2026"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+            <div className="space-y-1 text-center py-2">
+              <div className="text-[11px] uppercase tracking-widest font-semibold text-indigo-400">
+                {watchedValues.organization || 'Organization Name'}
+              </div>
+              <div className="text-lg sm:text-xl font-bold text-white tracking-tight font-display">
+                {watchedValues.course_name || 'Course / Certification Title'}
+              </div>
+              <div className="text-xs text-slate-400">
+                Authorized Signatory: <span className="text-slate-200">{watchedValues.issuer || 'Signatory Name'}</span> • Issued on{' '}
+                <span className="text-slate-200">{watchedValues.issue_date || 'Date'}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -338,22 +437,28 @@ export const GenerateCertificates: React.FC = () => {
 
       {/* Step 2: Recipient Entry */}
       {currentStep === 2 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">2. Recipient Ingestion</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-indigo-600" />
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
+                  2. Recipient Ingestion
+                </h2>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
                 Choose between uploading a CSV spreadsheet or entering recipients manually.
               </p>
             </div>
-            {/* Input Toggle */}
-            <div className="inline-flex rounded-lg border border-slate-200 p-1 bg-slate-50 self-start">
+
+            {/* Segmented Input Mode Switcher */}
+            <div className="inline-flex rounded-xl border border-slate-200 p-1 bg-slate-50 self-start">
               <button
                 type="button"
                 onClick={() => setInputMode('csv')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
                   inputMode === 'csv'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-indigo-700 shadow-2xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -362,9 +467,9 @@ export const GenerateCertificates: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setInputMode('manual')}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
                   inputMode === 'manual'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-indigo-700 shadow-2xs border border-slate-200/60'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -375,8 +480,9 @@ export const GenerateCertificates: React.FC = () => {
 
           {inputMode === 'csv' ? (
             <div className="space-y-6">
-              <div className="flex items-center justify-between bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 text-xs text-indigo-900">
-                <div className="flex items-center gap-2">
+              {/* CSV Guidance Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-indigo-50/60 border border-indigo-100 rounded-xl p-4 text-xs text-indigo-950">
+                <div className="flex items-center gap-2.5">
                   <Info className="w-4 h-4 text-indigo-600 shrink-0" />
                   <span>
                     Your CSV must include columns for <strong>recipient_name</strong> and optional{' '}
@@ -386,15 +492,15 @@ export const GenerateCertificates: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleDownloadSampleCsv}
-                  className="inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg shadow-2xs hover:bg-indigo-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 font-semibold text-indigo-700 hover:text-indigo-900 bg-white border border-indigo-200/80 px-3 py-1.5 rounded-lg shadow-2xs hover:bg-indigo-50/50 transition-colors self-start shrink-0"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Sample CSV
                 </button>
               </div>
 
-              {/* Drag and Drop Zone */}
-              <div className="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-8 text-center transition-colors bg-slate-50/50 hover:bg-indigo-50/20">
+              {/* Modern Drag and Drop Zone */}
+              <div className="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-8 sm:p-10 text-center transition-all bg-slate-50/40 hover:bg-indigo-50/10 group cursor-pointer">
                 <input
                   type="file"
                   id="csv-file-input"
@@ -406,25 +512,30 @@ export const GenerateCertificates: React.FC = () => {
                   htmlFor="csv-file-input"
                   className="cursor-pointer flex flex-col items-center justify-center space-y-3"
                 >
-                  <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                     <FileSpreadsheet className="w-6 h-6" />
                   </div>
                   <div>
-                    <span className="font-semibold text-indigo-600 hover:underline">
+                    <span className="font-bold text-sm text-indigo-600 hover:underline">
                       Click to upload CSV
                     </span>{' '}
-                    <span className="text-slate-500">or drag and drop</span>
+                    <span className="text-slate-600 text-sm">or drag and drop here</span>
                   </div>
-                  <p className="text-xs text-slate-400">CSV files up to 25MB supported</p>
+                  <p className="text-xs text-slate-400">
+                    Supports comma-delimited UTF-8 CSV files up to 25MB
+                  </p>
                 </label>
               </div>
 
+              {/* Uploaded File Status Card */}
               {csvFile && (
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
                     <div>
-                      <div className="font-semibold text-sm text-slate-900">{csvFile.name}</div>
+                      <div className="font-bold text-sm text-slate-900">{csvFile.name}</div>
                       <div className="text-xs text-slate-500">
                         {(csvFile.size / 1024).toFixed(1)} KB • {csvPreviewRows.length} recipients detected
                       </div>
@@ -436,19 +547,24 @@ export const GenerateCertificates: React.FC = () => {
                       setCsvFile(null);
                       setCsvPreviewRows([]);
                     }}
-                    className="text-xs text-rose-600 hover:underline font-semibold"
+                    className="text-xs text-rose-600 hover:text-rose-700 font-semibold hover:underline self-end sm:self-auto"
                   >
-                    Remove
+                    Remove File
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs text-slate-500 pb-1">
+                <span>Enter one recipient per row:</span>
+                <span className="font-medium">{manualRecipients.length} rows</span>
+              </div>
+
               <div className="space-y-2.5">
                 {manualRecipients.map((rec, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-slate-400 w-6 text-center">
+                    <span className="text-xs font-mono text-slate-400 w-6 text-center tabular-nums">
                       {index + 1}
                     </span>
                     <input
@@ -460,7 +576,7 @@ export const GenerateCertificates: React.FC = () => {
                         updated[index].recipient_name = e.target.value;
                         setManualRecipients(updated);
                       }}
-                      className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-white"
                     />
                     <input
                       type="email"
@@ -471,14 +587,14 @@ export const GenerateCertificates: React.FC = () => {
                         updated[index].recipient_email = e.target.value;
                         setManualRecipients(updated);
                       }}
-                      className="flex-1 px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="flex-1 px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 bg-white"
                     />
                     <button
                       type="button"
                       onClick={() => {
                         setManualRecipients(manualRecipients.filter((_, i) => i !== index));
                       }}
-                      className="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition-colors"
+                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                       title="Remove row"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -495,7 +611,7 @@ export const GenerateCertificates: React.FC = () => {
                     { recipient_name: '', recipient_email: '' },
                   ]);
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-dashed border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
               >
                 <Plus className="w-4 h-4" />
                 Add Another Recipient
@@ -507,35 +623,46 @@ export const GenerateCertificates: React.FC = () => {
 
       {/* Step 3: Recipient Validation Preview */}
       {currentStep === 3 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-lg font-bold text-slate-900">3. Recipient Validation Preview</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
+                3. Recipient Validation Preview
+              </h2>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
               Review records before initiating background generation. Invalid records are isolated and will not halt the job.
             </p>
           </div>
 
-          {/* Validation Counters */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <span className="text-xs text-slate-500 uppercase font-semibold">Total Ingested</span>
-              <div className="text-2xl font-bold text-slate-900 mt-1">{activeRecipients.length}</div>
+          {/* Validation KPI Counters */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+              <span className="text-[11px] text-slate-500 uppercase tracking-wider font-bold">Total Ingested</span>
+              <div className="text-2xl font-bold text-slate-900 mt-1 font-display tabular-nums">
+                {activeRecipients.length}
+              </div>
             </div>
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-              <span className="text-xs text-emerald-700 uppercase font-semibold">Valid for PDF</span>
-              <div className="text-2xl font-bold text-emerald-800 mt-1">{validRecipients.length}</div>
+            <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
+              <span className="text-[11px] text-emerald-800 uppercase tracking-wider font-bold">Valid for PDF</span>
+              <div className="text-2xl font-bold text-emerald-800 mt-1 font-display tabular-nums">
+                {validRecipients.length}
+              </div>
             </div>
-            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200">
-              <span className="text-xs text-rose-700 uppercase font-semibold">Issues Detected</span>
-              <div className="text-2xl font-bold text-rose-800 mt-1">{invalidRecipients.length}</div>
+            <div className="p-4 rounded-xl bg-rose-50/70 border border-rose-200/80">
+              <span className="text-[11px] text-rose-800 uppercase tracking-wider font-bold">Issues Detected</span>
+              <div className="text-2xl font-bold text-rose-800 mt-1 font-display tabular-nums">
+                {invalidRecipients.length}
+              </div>
             </div>
           </div>
 
           {duplicates.length > 0 && (
-            <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
               <span>
-                <strong>{duplicates.length} duplicate entries detected.</strong> Duplicates will be isolated to prevent double issuance.
+                <strong>{duplicates.length} duplicate entries detected.</strong> Duplicates will be isolated to prevent duplicate issuance.
               </span>
             </div>
           )}
@@ -544,7 +671,7 @@ export const GenerateCertificates: React.FC = () => {
           <div className="border border-slate-200 rounded-xl overflow-hidden">
             <div className="max-h-64 overflow-y-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase sticky top-0 border-b border-slate-200">
+                <thead className="bg-slate-50 text-slate-600 uppercase font-bold sticky top-0 border-b border-slate-200 text-[11px]">
                   <tr>
                     <th className="px-4 py-2.5">#</th>
                     <th className="px-4 py-2.5">Recipient Name</th>
@@ -553,29 +680,37 @@ export const GenerateCertificates: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-700">
-                  {activeRecipients.map((rec, i) => {
-                    const isValid = rec.recipient_name && rec.recipient_name.trim().length >= 2;
-                    return (
-                      <tr key={i} className="hover:bg-slate-50/50">
-                        <td className="px-4 py-2 text-slate-400 font-mono">{i + 1}</td>
-                        <td className="px-4 py-2 font-medium text-slate-900">
-                          {rec.recipient_name || <span className="text-rose-500 italic">Missing</span>}
-                        </td>
-                        <td className="px-4 py-2 text-slate-500">{rec.recipient_email || '—'}</td>
-                        <td className="px-4 py-2">
-                          {isValid ? (
-                            <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> Valid
-                            </span>
-                          ) : (
-                            <span className="text-rose-600 font-semibold flex items-center gap-1">
-                              <AlertTriangle className="w-3.5 h-3.5" /> Name too short
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {activeRecipients.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-6 text-center text-slate-400">
+                        No recipient records entered.
+                      </td>
+                    </tr>
+                  ) : (
+                    activeRecipients.map((rec, i) => {
+                      const isValid = rec.recipient_name && rec.recipient_name.trim().length >= 2;
+                      return (
+                        <tr key={i} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="px-4 py-2.5 text-slate-400 font-mono tabular-nums">{i + 1}</td>
+                          <td className="px-4 py-2.5 font-semibold text-slate-900">
+                            {rec.recipient_name || <span className="text-rose-500 italic">Missing Name</span>}
+                          </td>
+                          <td className="px-4 py-2.5 text-slate-500">{rec.recipient_email || '—'}</td>
+                          <td className="px-4 py-2.5">
+                            {isValid ? (
+                              <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 text-[11px]">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Valid
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-rose-700 font-semibold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200/60 text-[11px]">
+                                <AlertTriangle className="w-3 h-3 text-rose-600" /> Name too short
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
@@ -585,45 +720,50 @@ export const GenerateCertificates: React.FC = () => {
 
       {/* Step 4: Review and Submit */}
       {currentStep === 4 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-lg font-bold text-slate-900">4. Review & Launch Generation</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 font-display">
+                4. Review & Launch Generation
+              </h2>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
               Confirm your batch configuration. Processing will execute asynchronously in bounded batches.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-xl border border-slate-200 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-200/80 text-xs">
             <div>
-              <span className="text-slate-400 uppercase font-semibold">Course / Event</span>
+              <span className="text-slate-400 uppercase font-bold text-[10px] tracking-wider">Course / Event</span>
               <div className="font-bold text-slate-900 text-sm mt-0.5">{getValues('course_name')}</div>
               {getValues('event_name') && (
                 <div className="text-slate-500 mt-0.5">{getValues('event_name')}</div>
               )}
             </div>
             <div>
-              <span className="text-slate-400 uppercase font-semibold">Organization & Signatory</span>
+              <span className="text-slate-400 uppercase font-bold text-[10px] tracking-wider">Organization & Signatory</span>
               <div className="font-bold text-slate-900 text-sm mt-0.5">{getValues('organization')}</div>
               <div className="text-slate-500 mt-0.5">{getValues('issuer')}</div>
             </div>
             <div>
-              <span className="text-slate-400 uppercase font-semibold">Issue Date</span>
+              <span className="text-slate-400 uppercase font-bold text-[10px] tracking-wider">Issue Date</span>
               <div className="font-semibold text-slate-800 text-sm mt-0.5">{getValues('issue_date')}</div>
             </div>
             <div>
-              <span className="text-slate-400 uppercase font-semibold">Recipients to Process</span>
-              <div className="font-semibold text-indigo-700 text-sm mt-0.5">
+              <span className="text-slate-400 uppercase font-bold text-[10px] tracking-wider">Recipients to Process</span>
+              <div className="font-bold text-indigo-700 text-sm mt-0.5 tabular-nums">
                 {validRecipients.length} valid / {activeRecipients.length} total
               </div>
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-1">
-            <div className="font-bold flex items-center gap-1.5">
+            <div className="font-bold flex items-center gap-1.5 text-sm text-indigo-950">
               <Sparkles className="w-4 h-4 text-indigo-600" />
               Asynchronous Background Guarantee
             </div>
-            <p>
+            <p className="leading-relaxed">
               Once submitted, the job returns HTTP 202 Accepted. You will be redirected to the real-time job progress monitor where you can track each recipient's certificate generation.
             </p>
           </div>
@@ -631,12 +771,12 @@ export const GenerateCertificates: React.FC = () => {
       )}
 
       {/* Step Navigation Controls */}
-      <div className="flex items-center justify-between pt-4">
+      <div className="flex items-center justify-between pt-2">
         {currentStep > 1 ? (
           <button
             type="button"
             onClick={prevStep}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 active:bg-slate-100 transition-colors shadow-2xs"
           >
             <ArrowLeft className="w-4 h-4" />
             Previous
@@ -649,7 +789,7 @@ export const GenerateCertificates: React.FC = () => {
           <button
             type="button"
             onClick={nextStep}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-xs shadow-indigo-600/30 transition-all hover:scale-[1.01]"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs sm:text-sm shadow-xs shadow-indigo-600/30 transition-all hover:scale-[1.01]"
           >
             <span>Next Step</span>
             <ArrowRight className="w-4 h-4" />
@@ -659,17 +799,17 @@ export const GenerateCertificates: React.FC = () => {
             type="button"
             onClick={onSubmitAll}
             disabled={isSubmitting}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.02] disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.01] disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Scheduling Batch Job...
+                <span>Scheduling Batch Job...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                Launch Certificate Generation
+                <span>Launch Certificate Generation</span>
               </>
             )}
           </button>
@@ -678,3 +818,4 @@ export const GenerateCertificates: React.FC = () => {
     </div>
   );
 };
+
