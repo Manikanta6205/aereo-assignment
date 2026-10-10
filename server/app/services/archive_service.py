@@ -1,12 +1,14 @@
 import io
+import logging
 import zipfile
-from typing import List, Tuple
+from typing import Tuple
+
 from sqlalchemy.orm import Session
+
+from app.models.job import ArchiveStatus
 from app.repositories.job_repository import JobRepository
 from app.repositories.recipient_repository import RecipientRepository
-from app.models.job import ArchiveStatus
 from app.storage import get_storage
-import logging
 
 logger = logging.getLogger(__name__)
 

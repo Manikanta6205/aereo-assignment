@@ -1,7 +1,9 @@
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
+
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, select, func
-from app.models.job import GenerationJob, JobStatus, ArchiveStatus, utcnow
+
+from app.models.job import ArchiveStatus, GenerationJob, JobStatus, utcnow
 
 
 class JobRepository:

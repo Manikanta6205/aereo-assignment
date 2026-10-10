@@ -1,10 +1,10 @@
 import enum
-from datetime import datetime, timezone
 import uuid
-from sqlalchemy import (
-    Column, String, Integer, DateTime, Text, Enum, ForeignKey, Index, BigInteger
-)
+from datetime import datetime, timezone
+
+from sqlalchemy import BigInteger, Column, DateTime, Enum, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import relationship
+
 from app.db.base import Base
 
 

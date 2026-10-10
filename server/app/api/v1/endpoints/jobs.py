@@ -1,26 +1,32 @@
 import csv
 import io
 import math
-from typing import Optional, List
+from typing import Optional
+
 from fastapi import (
-    APIRouter, Depends, status, Query, UploadFile, File, Form, HTTPException, Response
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    Response,
+    UploadFile,
+    status,
 )
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
+from app.core.errors import JobNotFoundError
 from app.db.session import get_db
-from app.models.job import JobStatus, ArchiveStatus
-from app.models.recipient import RecipientStatus
-from app.schemas.job import (
-    JobCreate, JobResponse, JobProgressResponse, JobDetailResponse
-)
-from app.schemas.common import PaginatedResponse, MessageResponse
+from app.models.job import ArchiveStatus, JobStatus
 from app.repositories.job_repository import JobRepository
 from app.repositories.recipient_repository import RecipientRepository
-from app.services.job_service import JobService
+from app.schemas.common import MessageResponse, PaginatedResponse
+from app.schemas.job import JobCreate, JobDetailResponse, JobProgressResponse, JobResponse
 from app.services.archive_service import ArchiveService
+from app.services.job_service import JobService
 from app.storage import get_storage
-from app.core.errors import JobNotFoundError, InvalidJobStateError
 
 router = APIRouter()
 
@@ -221,14 +227,14 @@ def get_job_progress(job_id: str, db: Session = Depends(get_db)):
 @router.post("/{job_id}/retry", response_model=MessageResponse)
 def retry_job(job_id: str, db: Session = Depends(get_db)):
     """Retries failed certificate generation for a job."""
-    job = JobService.retry_failed(db, job_id)
+    JobService.retry_failed(db, job_id)
     return MessageResponse(message=f"Job {job_id} scheduled for retry.")
 
 
 @router.post("/{job_id}/cancel", response_model=MessageResponse)
 def cancel_job(job_id: str, db: Session = Depends(get_db)):
     """Cancels a currently queued or processing job."""
-    job = JobService.cancel_job(db, job_id)
+    JobService.cancel_job(db, job_id)
     return MessageResponse(message=f"Job {job_id} cancelled.")
 
 

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, BinaryIO
-import io
+from typing import Optional
 
 
 class BaseStorage(ABC):

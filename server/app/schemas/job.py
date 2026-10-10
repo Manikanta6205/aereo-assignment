@@ -1,7 +1,9 @@
-from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field, field_validator, ConfigDict
-from app.models.job import JobStatus, ArchiveStatus
+from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from app.models.job import ArchiveStatus, JobStatus
 from app.schemas.recipient import RecipientInput, RecipientResponse
 
 

@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# Environment / Secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.local
+
+# Databases (local dev only)
+*.db
+*.sqlite3
+
+# Node / Frontend
+node_modules/
+client/dist/
+
+# Vite
+.vite/
+
+# Storage & Runtime Generated Files
+storage_data/*
+!storage_data/.gitkeep
+server/storage_data/*
+!server/storage_data/.gitkeep
+*.pdf
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp

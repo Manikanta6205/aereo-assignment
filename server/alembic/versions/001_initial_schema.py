@@ -6,8 +6,10 @@ Create Date: 2026-10-10 18:00:00.000000
 
 """
 from typing import Sequence, Union
-from alembic import op
+
 import sqlalchemy as sa
+
+from alembic import op
 
 revision: str = '001_initial_schema'
 down_revision: Union[str, None] = None

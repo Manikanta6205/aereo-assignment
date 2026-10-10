@@ -1,14 +1,16 @@
 import math
 from typing import Optional
-from fastapi import APIRouter, Depends, Query, HTTPException, status
+
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
+
+from app.core.errors import JobNotFoundError
 from app.db.session import get_db
 from app.models.recipient import RecipientStatus
-from app.schemas.recipient import RecipientResponse
-from app.schemas.common import PaginatedResponse
 from app.repositories.job_repository import JobRepository
 from app.repositories.recipient_repository import RecipientRepository
-from app.core.errors import JobNotFoundError
+from app.schemas.common import PaginatedResponse
+from app.schemas.recipient import RecipientResponse
 
 router = APIRouter()
 

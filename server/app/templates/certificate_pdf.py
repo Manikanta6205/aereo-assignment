@@ -1,9 +1,8 @@
 import io
-from datetime import datetime
 from typing import Optional
-from reportlab.lib.pagesizes import A4, landscape
+
 from reportlab.lib import colors
-from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.pdfgen import canvas
 
 

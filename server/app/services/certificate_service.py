@@ -1,8 +1,9 @@
+import logging
 import uuid
 from typing import Optional, Tuple
-from app.templates.certificate_pdf import CertificateGenerator
+
 from app.storage import get_storage
-import logging
+from app.templates.certificate_pdf import CertificateGenerator
 
 logger = logging.getLogger(__name__)
 

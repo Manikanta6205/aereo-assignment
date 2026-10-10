@@ -1,6 +1,8 @@
-from typing import Optional, List, Tuple
-from sqlalchemy.orm import Session
+from typing import List, Optional, Tuple
+
 from sqlalchemy import desc
+from sqlalchemy.orm import Session
+
 from app.models.recipient import RecipientCertificate, RecipientStatus, utcnow
 
 

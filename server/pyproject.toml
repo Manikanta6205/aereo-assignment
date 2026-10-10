@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = [
+    "E402",  # Module level import not at top of file (test environment setup)
+    "E501",  # Line length handled gracefully
+    "B008",  # FastAPI Depends(), Query(), File(), Form() in argument defaults
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

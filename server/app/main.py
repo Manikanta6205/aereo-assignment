@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 
-from app.core.config import settings
-from app.core.logging import setup_logging
-from app.core.errors import AppError
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
 from app.api.v1.api import api_router
+from app.core.config import settings
+from app.core.errors import AppError
+from app.core.logging import setup_logging
 from app.db.base import Base
 from app.db.session import engine
 from app.storage import get_storage
@@ -16,8 +17,16 @@ setup_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Ensure database tables exist (also covered by Alembic)
-    Base.metadata.create_all(bind=engine)
+    # Ensure database tables exist (retry if Neon is waking up from idle)
+    import time
+    for attempt in range(5):
+        try:
+            Base.metadata.create_all(bind=engine)
+            break
+        except Exception:
+            if attempt == 4:
+                raise
+            time.sleep(2)
     # Ensure storage initialized
     get_storage()
     yield
